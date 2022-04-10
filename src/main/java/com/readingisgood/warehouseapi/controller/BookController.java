@@ -2,6 +2,7 @@ package com.readingisgood.warehouseapi.controller;
 
 import com.readingisgood.warehouseapi.entity.Book;
 import com.readingisgood.warehouseapi.entity.Stock;
+import com.readingisgood.warehouseapi.model.WarehouseResponse;
 import com.readingisgood.warehouseapi.service.BookService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,7 +26,11 @@ public class BookController {
     @ApiOperation(value = "Insert new book to entity and update stock")
     public ResponseEntity<?> addBook(@RequestBody Book request) {
         try {
-            return new ResponseEntity<>(bookService.addBook(request), HttpStatus.OK);
+            WarehouseResponse response = bookService.addBook(request);
+            if(response.getError()!=null){
+                return new ResponseEntity<>(response, response.getError().getStatus());
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception ex) {
             log.error("Exception on ", ex);
             return new ResponseEntity<>("Service Error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -37,7 +42,11 @@ public class BookController {
     @ApiOperation(value = "Update stock directly by stock object")
     public ResponseEntity<?> updateStock(@RequestBody Stock request) {
         try {
-            return new ResponseEntity<>(bookService.updateBook(request), HttpStatus.OK);
+            WarehouseResponse response = bookService.updateBook(request);
+            if(response.getError()!=null){
+                return new ResponseEntity<>(response, response.getError().getStatus());
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception ex) {
             log.error("Exception on ", ex);
             return new ResponseEntity<>("Service Error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

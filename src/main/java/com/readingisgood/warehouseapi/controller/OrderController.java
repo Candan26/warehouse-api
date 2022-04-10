@@ -1,6 +1,7 @@
 package com.readingisgood.warehouseapi.controller;
 
 import com.readingisgood.warehouseapi.entity.Order;
+import com.readingisgood.warehouseapi.model.WarehouseResponse;
 import com.readingisgood.warehouseapi.service.OrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @RestController
@@ -20,13 +22,15 @@ import java.util.Date;
 public class OrderController {
 
     private final OrderService orderService;
-
+   
     @CrossOrigin(origins = "*")
-    @GetMapping(value = "/getOrderByDateInterval/{startDate}/{stopDate}")
+    @GetMapping(value = "/getByDateInterval")
     @ApiOperation(value = "Get order list by start stop date interval")
-    public ResponseEntity<?> queryOrderByDateInterval(@PathVariable Date startDate, @PathVariable Date stopDate) {
+    public ResponseEntity<?> queryOrderByDateInterval(@RequestParam(value = "startDate", defaultValue = "") String startDate,
+                                                      @RequestParam(value = "stopDate", defaultValue = "") String stopDate) {
         try {
-            return new ResponseEntity<>(orderService.queryOrdersByDateInterval(startDate, stopDate), HttpStatus.OK);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            return new ResponseEntity<>(orderService.queryOrdersByDateInterval(format.parse(startDate), format.parse(stopDate)), HttpStatus.OK);
         } catch (Exception ex) {
             log.error("Exception on ", ex);
             return new ResponseEntity<>("Service Error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -34,9 +38,9 @@ public class OrderController {
     }
 
     @CrossOrigin(origins = "*")
-    @GetMapping(value = "/getOrderById/{id}")
+    @GetMapping(value = "/getById/{id}")
     @ApiOperation(value = "Get order by order ID")
-    public ResponseEntity<?> queryOrderByDateInterval(@PathVariable String id) {
+    public ResponseEntity<?> queryOrderById(@PathVariable String id) {
         try {
             return new ResponseEntity<>(orderService.queryOrdersById(id), HttpStatus.OK);
         } catch (Exception ex) {
@@ -51,7 +55,11 @@ public class OrderController {
     @ApiOperation(value = "Add new order on Order entity this endpoint updates also the stock values")
     public ResponseEntity<?> addNewOrder(@RequestBody Order request) {
         try {
-            return new ResponseEntity<>(orderService.addNewOrder(request), HttpStatus.OK);
+            WarehouseResponse response = orderService.addNewOrder(request);
+            if(response.getError()!=null){
+                return new ResponseEntity<>(response, response.getError().getStatus());
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception ex) {
             log.error("Exception on ", ex);
             return new ResponseEntity<>("Service Error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

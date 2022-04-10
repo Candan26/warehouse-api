@@ -22,6 +22,8 @@ public class BookServiceImpl implements BookService {
 
     private static final String ERROR_STOCK_NULL_OBJECT = "Stock object cannot be null";
 
+    private static final String ERROR_OBJECT_NOT_IN_STOCK = "Given book id not exist in stock";
+
     private final BookRepository bookRepository;
 
     private final StockRepository stockRepository;
@@ -50,11 +52,19 @@ public class BookServiceImpl implements BookService {
                 log.error("Stock object is null");
                 return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.BAD_REQUEST, ERROR_STOCK_NULL_OBJECT));
             }
-            return new WarehouseResponse(WarehouseUtil.SUCCEED, stockRepository.save(stock), null);
+            Stock stockFromDb = stockRepository.findById(stock.getId()).get();
+            cloneStockObj(stock, stockFromDb);
+            return new WarehouseResponse(WarehouseUtil.SUCCEED, stockRepository.save(stockFromDb), null);
         } catch (Exception ex) {
             log.error("Exception on" , ex);
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex));
         }
+    }
+
+    private void cloneStockObj(Stock stock, Stock stockFromDb) {
+        stockFromDb.setBookName(stock.getBookName());
+        stockFromDb.setTotalPrice(stock.getTotalPrice());
+        stockFromDb.setTotalQuantity(stock.getTotalQuantity());
     }
 
     private void addBookToStock(Book book) {

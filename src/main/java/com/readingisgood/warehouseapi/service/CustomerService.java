@@ -9,6 +9,6 @@ import org.springframework.data.jpa.domain.Specification;
 
 public interface CustomerService {
     Page<CustomerOrderDto> queryCustomerOrders(String name,  String surname, int page, int size) throws Exception;
-    Page<CustomerOrderDto> queryCustomerOrders(String tc, int page, int size) throws Exception;
+    WarehouseResponse queryCustomerOrders(String tc, int page, int size) throws Exception;
     WarehouseResponse addCustomer(Customer customer);
 }

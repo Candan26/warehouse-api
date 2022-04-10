@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 public class CustomerServiceImpl implements CustomerService {
 
     private static final String ERROR_WRONG_CUSTOMER_DATA = "Please write customer name, surname and tc_id number";
+    private static final String ERROR_NO_CONTENT = "cannot found customers with this parameters";
 
     private final CustomerRepository customerRepository;
 
@@ -38,11 +39,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Page<CustomerOrderDto> queryCustomerOrders(String name, String surname, int page, int size) throws Exception {
         Pageable pagable = PageRequest.of(page, size);
-        Customer customer = null;
+        Customer customer;
         Page<Order> orderList = null;
         List<Customer> customerList = customerRepository.findByNameAndSurname(name, surname);
         if (!customerList.isEmpty()) {
             customer = customerList.get(0);
+        }else{
+            throw new Exception("cannot found customers with this parameters");
         }
         if(customer !=null){
             log.debug("customer object found searching for order list from name surname");
@@ -52,19 +55,21 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Page<CustomerOrderDto> queryCustomerOrders(String tc, int page, int size) throws Exception {
+    public WarehouseResponse queryCustomerOrders(String tc, int page, int size) throws Exception {
         Pageable pagable = PageRequest.of(page, size);
-        Customer customer = null;
+        Customer customer;
         Page<Order> orderList = null;
         List<Customer> customerList = customerRepository.findByTcId(tc);
         if (!customerList.isEmpty()) {
             customer = customerList.get(0);
+        }else{
+            return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.NO_CONTENT, ERROR_NO_CONTENT));
         }
         if(customer !=null){
             log.debug("customer object found searching for order list from tc id");
             orderList = orderRepository.findByCustomerId(customer.getTcId(), pagable);
         }
-        return  customerMapper.customerSearchEntityToDto(customer,orderList);
+        return  new WarehouseResponse(WarehouseUtil.SUCCEED, customerMapper.customerSearchEntityToDto(customer,orderList), null);
     }
 
     @Override
