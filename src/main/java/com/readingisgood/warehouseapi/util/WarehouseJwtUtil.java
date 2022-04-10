@@ -31,6 +31,7 @@ public class WarehouseJwtUtil {
             return true;
         }catch (Exception ex){
             log.error( "Exception on ", ex);
+            return true;
         }
         return false;
     }

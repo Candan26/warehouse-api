@@ -8,7 +8,6 @@ class WarehouseApiApplicationTests {
 
     @Test
     void contextLoads() {
-
     }
 
 }

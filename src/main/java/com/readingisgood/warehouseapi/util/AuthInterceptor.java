@@ -1,6 +1,5 @@
 package com.readingisgood.warehouseapi.util;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -15,7 +14,7 @@ public class AuthInterceptor  implements HandlerInterceptor {
     private   WarehouseJwtUtil jwtUtil;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String token = request.getHeader("Authorization");
         if(token !=null && token.startsWith("Bearer ")){
             token = token.substring(7);

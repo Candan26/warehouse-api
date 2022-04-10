@@ -18,4 +18,10 @@ public class Error {
         this.detail = ex.getMessage();
     }
 
+    public Error(HttpStatus status, String message){
+        this.status = status;
+        this.httpStatusCode = status.value();
+        this.message= message;
+    }
+
 }
