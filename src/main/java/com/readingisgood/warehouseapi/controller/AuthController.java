@@ -5,6 +5,7 @@ import com.readingisgood.warehouseapi.model.Error;
 import com.readingisgood.warehouseapi.model.WarehouseResponse;
 import com.readingisgood.warehouseapi.service.AuthService;
 import com.readingisgood.warehouseapi.util.WarehouseUtil;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
