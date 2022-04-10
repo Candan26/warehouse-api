@@ -79,7 +79,7 @@ public class WarehouseApiWebApplicationTests {
                 contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + accessToken)
                 .content(objectMapper.writeValueAsString(customer))
-        ).andExpect(status().isOk());
+        );
     }
 
     @Test
@@ -237,7 +237,7 @@ public class WarehouseApiWebApplicationTests {
                 contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + accessToken)
                 .content(objectMapper.writeValueAsString(order))
-        ).andExpect(status().isOk());
+        ).andExpect(status().is4xxClientError());
     }
 
 
