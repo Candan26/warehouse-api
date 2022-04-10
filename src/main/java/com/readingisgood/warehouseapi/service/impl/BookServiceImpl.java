@@ -9,11 +9,13 @@ import com.readingisgood.warehouseapi.repository.StockRepository;
 import com.readingisgood.warehouseapi.service.BookService;
 import com.readingisgood.warehouseapi.util.WarehouseUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BookServiceImpl implements BookService {
 
     private static final String ERROR_WRONG_BOOK_DATA = "Please write book name";
@@ -28,6 +30,7 @@ public class BookServiceImpl implements BookService {
     public WarehouseResponse addBook(Book book) {
         try {
             if (book == null || book.getName() == null) {
+                log.error("book object is null");
                 return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.BAD_REQUEST, ERROR_WRONG_BOOK_DATA));
             }
             book = bookRepository.save(book);
@@ -35,6 +38,7 @@ public class BookServiceImpl implements BookService {
 
             return new WarehouseResponse(WarehouseUtil.SUCCEED, book, null);
         } catch (Exception ex) {
+            log.error("Exception on ", ex);
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex));
         }
     }
@@ -43,10 +47,12 @@ public class BookServiceImpl implements BookService {
     public WarehouseResponse updateBook(Stock stock) {
         try {
             if (stock == null) {
+                log.error("Stock object is null");
                 return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.BAD_REQUEST, ERROR_STOCK_NULL_OBJECT));
             }
             return new WarehouseResponse(WarehouseUtil.SUCCEED, stockRepository.save(stock), null);
         } catch (Exception ex) {
+            log.error("Exception on" , ex);
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex));
         }
     }
@@ -59,9 +65,11 @@ public class BookServiceImpl implements BookService {
             stock.setTotalPrice(book.getPrice());
             stock.setBookName(book.getName());
             stock.setTotalQuantity(1);
+            log.debug("the book: "+book.getName() + "doesnt exist on stock creating new");
         } else {
             stock.setTotalQuantity(stock.getTotalQuantity() + 1);
             stock.setTotalPrice(stock.getTotalPrice() + book.getPrice());
+            log.debug("the book: "+book.getName() + "exist on stock updating fields");
         }
         stockRepository.save(stock);
     }

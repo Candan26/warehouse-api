@@ -38,6 +38,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             return new WarehouseResponse(WarehouseUtil.SUCCEED, orderRepository.findByStartDateBetween(startDate, stopDate), null);
         } catch (Exception ex) {
+            log.error("Exception on ",ex);
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex));
         }
     }
@@ -47,6 +48,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             return new WarehouseResponse(WarehouseUtil.SUCCEED, orderRepository.findById(id).stream().findFirst().orElse(new Order()), null);
         } catch (Exception ex) {
+            log.error("Exception on ",ex);
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex));
         }
     }
@@ -56,14 +58,17 @@ public class OrderServiceImpl implements OrderService {
 
         List<Book> bookList = order.getBookList();
         if (bookList == null || bookList.isEmpty()) {
+            log.error("Order has no book ");
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.BAD_REQUEST, ERROR_INSERT_BOOK_IN_ORDER));
         }
         HashMap<String, Integer> bookMap;
         bookMap = categorizeBooks(bookList);
         if (!checkBooksOnStock(bookMap)) {
+            log.error("There is not enough book on Stock ");
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.BAD_REQUEST, ERROR_OUT_OF_STOCK));
         }
         if (updateStock(bookMap)) {
+            log.error("System cannot update the stock please check db connection");
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_UPDATE_STOCK));
         }
         return addOrder(order, bookMap);
@@ -75,6 +80,7 @@ public class OrderServiceImpl implements OrderService {
             double unitPrice = stock.getTotalPrice() / stock.getTotalQuantity();
             stock.setTotalQuantity(stock.getTotalQuantity() + entry.getValue());
             stock.setTotalPrice(stock.getTotalPrice() + (unitPrice * entry.getValue()));
+            log.info("The order successfully restored in stock " + stock);
             stockRepository.save(stock);
         }
     }
@@ -85,6 +91,7 @@ public class OrderServiceImpl implements OrderService {
             return new WarehouseResponse(WarehouseUtil.SUCCEED, orderRepository.save(order), null);
         } catch (Exception ex) {
             log.error("Exception on ", ex);
+            log.error("rollback the stock information ");
             rollbackStock(bookMap);
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_INSERT_ORDER));
         }
@@ -123,6 +130,7 @@ public class OrderServiceImpl implements OrderService {
             for (Map.Entry<String, Integer> entry : bookMap.entrySet()) {
                 Stock stock = stockRepository.findByBookName(entry.getKey());
                 if (stock == null || stock.getTotalQuantity() < entry.getValue()) {
+                    log.info("Not enough staff in stock");
                     return false;
                 }
             }

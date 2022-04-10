@@ -45,6 +45,7 @@ public class CustomerServiceImpl implements CustomerService {
             customer = customerList.get(0);
         }
         if(customer !=null){
+            log.debug("customer object found searching for order list from name surname");
             orderList = orderRepository.findByCustomerId(customer.getTcId(), pagable);
         }
         return  customerMapper.customerSearchEntityToDto(customer,orderList);
@@ -60,6 +61,7 @@ public class CustomerServiceImpl implements CustomerService {
             customer = customerList.get(0);
         }
         if(customer !=null){
+            log.debug("customer object found searching for order list from tc id");
             orderList = orderRepository.findByCustomerId(customer.getTcId(), pagable);
         }
         return  customerMapper.customerSearchEntityToDto(customer,orderList);
@@ -71,11 +73,15 @@ public class CustomerServiceImpl implements CustomerService {
             if (Stream.of(customer).anyMatch(x -> (x == null || (x.getName() == null || x.getName().equals("")
                     || (x.getSurname() == null || x.getSurname().equals("")
                     || (x.getTcId() == null || x.getTcId().equals(""))))))) {
+                log.error("The customer object has wrong formatted name:  " + (customer != null ? customer.getName() :null)+
+                        " or surname: " + (customer != null ? customer.getSurname():null) +
+                        " or tcid: "+ (customer != null ? customer.getTcId():null));
                 return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.BAD_REQUEST, ERROR_WRONG_CUSTOMER_DATA));
             }
             customerRepository.insert(customer);
             return new WarehouseResponse(WarehouseUtil.SUCCEED, customer, null);
         } catch (Exception ex) {
+            log.error("Exception on ",ex);
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex));
         }
     }

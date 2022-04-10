@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface StatisticsService {
     List<StatisticsByDateDto> totalOrderCount() throws Exception;
-
-    StatisticsByDateDto queryCustomerOrders(Date dateBegin, Date dateEnd);
+    List<StatisticsByDateDto> queryCustomerOrders(Date dateBegin, Date dateEnd) throws Exception;
 }

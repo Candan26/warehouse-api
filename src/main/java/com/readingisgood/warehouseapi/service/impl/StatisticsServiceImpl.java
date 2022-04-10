@@ -29,7 +29,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public StatisticsByDateDto queryCustomerOrders(Date dateBegin, Date dateEnd) {
-        return null;
+    public List<StatisticsByDateDto> queryCustomerOrders(Date dateBegin, Date dateEnd) throws Exception {
+        List<Order> orderList = orderRepository.findByStartDateBetween(dateBegin, dateEnd);
+        return customerMapper.fromAllOrderMonthlyStatisticsToDto(orderList);
     }
 }

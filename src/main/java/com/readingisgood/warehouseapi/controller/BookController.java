@@ -6,6 +6,7 @@ import com.readingisgood.warehouseapi.service.BookService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/book")
 @RequiredArgsConstructor
 @Api(value = "Controller block for book objects")
+@Slf4j
 public class BookController {
 
     private final BookService bookService;
@@ -25,6 +27,7 @@ public class BookController {
         try {
             return new ResponseEntity<>(bookService.addBook(request), HttpStatus.OK);
         } catch (Exception ex) {
+            log.error("Exception on ", ex);
             return new ResponseEntity<>("Service Error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -36,6 +39,7 @@ public class BookController {
         try {
             return new ResponseEntity<>(bookService.updateBook(request), HttpStatus.OK);
         } catch (Exception ex) {
+            log.error("Exception on ", ex);
             return new ResponseEntity<>("Service Error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

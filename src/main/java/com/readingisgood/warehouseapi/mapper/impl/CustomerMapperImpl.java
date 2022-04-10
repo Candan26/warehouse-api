@@ -5,6 +5,7 @@ import com.readingisgood.warehouseapi.dto.StatisticsByDateDto;
 import com.readingisgood.warehouseapi.entity.Customer;
 import com.readingisgood.warehouseapi.entity.Order;
 import com.readingisgood.warehouseapi.mapper.CustomerMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ import java.util.*;
 import java.util.function.Function;
 
 @Component
+@Slf4j
 public class CustomerMapperImpl implements CustomerMapper {
     @Override
     public Page<CustomerOrderDto> customerSearchEntityToDto(final Customer customer, Page<Order> orders) {
@@ -25,6 +27,7 @@ public class CustomerMapperImpl implements CustomerMapper {
             private CustomerOrderDto composeOrderAndCustomer(Customer customer, Order order) {
                 CustomerOrderDto dto = new CustomerOrderDto();
                 if (customer == null || order == null) {
+                    log.info("customer obj null returning empty dto");
                     return dto;
                 }
                 dto.setCustomerTc(customer.getTcId());
@@ -45,6 +48,7 @@ public class CustomerMapperImpl implements CustomerMapper {
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM");
 
         if(ordersList== null || ordersList.isEmpty()){
+            log.info("Empty order List returning empty StatisticsByDateDto object");
             return statistics;
         }
         for(Order o : ordersList){
@@ -67,6 +71,7 @@ public class CustomerMapperImpl implements CustomerMapper {
                 next.setTotalOrderCount(next.getTotalOrderCount()+1);
                 next.setTotalBookCount(next.getTotalBookCount()+o.getBookList().size());
                 statistics.set(index,next);
+                log.debug("Found StatisticsDto object on same date " + sdf.format(o.getStartDate()));
                 break;
             }
             index++;

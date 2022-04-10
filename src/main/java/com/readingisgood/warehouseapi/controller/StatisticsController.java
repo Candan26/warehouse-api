@@ -5,6 +5,7 @@ import com.readingisgood.warehouseapi.service.StatisticsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.Date;
 @RequestMapping("/statistics")
 @RequiredArgsConstructor
 @Api(value = "Controller block for statistics objects")
+@Slf4j
 public class StatisticsController {
 
     private final StatisticsService statisticsService;
@@ -26,6 +28,7 @@ public class StatisticsController {
         try {
             return new ResponseEntity<>(statisticsService.totalOrderCount(), HttpStatus.OK);
         } catch (Exception ex) {
+            log.error("Exception on ", ex);
             return new ResponseEntity<>("Service Error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -38,6 +41,7 @@ public class StatisticsController {
         try {
             return new ResponseEntity<>(statisticsService.queryCustomerOrders(dateBegin, dateEnd), HttpStatus.OK);
         } catch (Exception ex) {
+            log.error("Exception on ", ex);
             return new ResponseEntity<>("Service Error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
