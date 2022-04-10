@@ -8,6 +8,9 @@
 		{
 			"name": "testAuth",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -75,6 +78,16 @@
 		{
 			"name": "queryCustomerOrderByNameAndSurname",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -99,6 +112,16 @@
 		{
 			"name": "queryCustomerByTc",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -122,6 +145,16 @@
 		{
 			"name": "addBook",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -151,11 +184,21 @@
 		{
 			"name": "updateStock",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": \"6252f3f098f1cb3831b2afbc\",\r\n    \"bookName\":\"testbook1\",\r\n    \"totalQuantity\":1,\r\n    \"totalPrice\":2323\r\n\r\n}",
+					"raw": "{\r\n   \r\n    \"bookName\":\"testbook1\",\r\n    \"totalQuantity\":1,\r\n    \"totalPrice\":2323\r\n\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -180,6 +223,16 @@
 		{
 			"name": "addNewOrder",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -239,6 +292,16 @@
 		{
 			"name": "queryOrderById",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -260,6 +323,16 @@
 		{
 			"name": "getTotalOrder",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -280,6 +353,16 @@
 		{
 			"name": "getTotalOrderByDateInterval",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {

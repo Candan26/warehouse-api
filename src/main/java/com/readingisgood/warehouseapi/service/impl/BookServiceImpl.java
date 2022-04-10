@@ -32,7 +32,7 @@ public class BookServiceImpl implements BookService {
     public WarehouseResponse addBook(Book book) {
         try {
             if (book == null || book.getName() == null) {
-                log.error("book object is null");
+                log.error("book object or name is null");
                 return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.BAD_REQUEST, ERROR_WRONG_BOOK_DATA));
             }
             book = bookRepository.save(book);
@@ -52,7 +52,7 @@ public class BookServiceImpl implements BookService {
                 log.error("Stock object is null");
                 return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.BAD_REQUEST, ERROR_STOCK_NULL_OBJECT));
             }
-            Stock stockFromDb = stockRepository.findById(stock.getId()).get();
+            Stock stockFromDb = stockRepository.findById(stock.getId()==null ?"": stock.getId()).get();
             cloneStockObj(stock, stockFromDb);
             return new WarehouseResponse(WarehouseUtil.SUCCEED, stockRepository.save(stockFromDb), null);
         } catch (Exception ex) {
