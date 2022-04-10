@@ -3,6 +3,7 @@ package com.readingisgood.warehouseapi.controller;
 import com.readingisgood.warehouseapi.entity.Order;
 import com.readingisgood.warehouseapi.service.OrderService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ public class OrderController {
 
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/getOrderByDateInterval/{startDate}/{stopDate}")
+    @ApiOperation(value = "Get order list by start stop date interval")
     public ResponseEntity<?> queryOrderByDateInterval(@PathVariable Date startDate, @PathVariable Date stopDate) {
         try {
             return new ResponseEntity<>( orderService.queryOrdersByDateInterval(startDate,stopDate), HttpStatus.OK);
@@ -30,6 +32,7 @@ public class OrderController {
 
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/getOrderById/{id}")
+    @ApiOperation(value = "Get order by order ID")
     public ResponseEntity<?> queryOrderByDateInterval(@PathVariable String id) {
         try {
             return new ResponseEntity<>( orderService.queryOrdersById(id), HttpStatus.OK);
@@ -41,6 +44,7 @@ public class OrderController {
 
     @CrossOrigin(origins = "*")
     @PostMapping(value = "/add")
+    @ApiOperation(value = "Add new order on Order entity this endpoint updates also the stock values")
     public ResponseEntity<?> addNewOrder(@RequestBody Order request) {
         try {
             return new ResponseEntity<>(orderService.addNewOrder(request), HttpStatus.OK);

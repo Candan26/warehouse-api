@@ -3,6 +3,7 @@ package com.readingisgood.warehouseapi.controller;
 
 import com.readingisgood.warehouseapi.service.StatisticsService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class StatisticsController {
 
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/totalOrderCount/")
+    @ApiOperation(value = "Get total order without date intervals")
     public ResponseEntity<?> getTotalOrder() {
         try {
             return new ResponseEntity<>( statisticsService.totalOrderCount(), HttpStatus.OK);
@@ -32,6 +34,7 @@ public class StatisticsController {
 
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/totalOrderCount/{dateBegin}/{dateEnd}")
+    @ApiOperation(value = "Get total order by start stop date intervals")
     public ResponseEntity<?> getTotalOrderByDateInterval(@PathVariable Date dateBegin, @PathVariable Date dateEnd ) {
         try {
             return new ResponseEntity<>( statisticsService.queryCustomerOrders(dateBegin,dateEnd), HttpStatus.OK);

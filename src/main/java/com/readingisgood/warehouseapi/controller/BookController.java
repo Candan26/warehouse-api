@@ -6,6 +6,7 @@ import com.readingisgood.warehouseapi.entity.Stock;
 import com.readingisgood.warehouseapi.service.BookService;
 import com.readingisgood.warehouseapi.service.CustomerService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class BookController {
 
     @CrossOrigin(origins = "*")
     @PostMapping(value = "/add")
+    @ApiOperation(value = "Insert new book to entity and update stock")
     public ResponseEntity<?> addBook(@RequestBody Book request) {
         try {
             return new ResponseEntity<>(bookService.addBook(request), HttpStatus.OK);
@@ -31,6 +33,7 @@ public class BookController {
 
     @CrossOrigin(origins = "*")
     @PostMapping(value = "/update")
+    @ApiOperation(value = "Update stock directly by stock object")
     public ResponseEntity<?> updateStock(@RequestBody Stock request) {
         try {
             return new ResponseEntity<>(bookService.updateBook(request), HttpStatus.OK);
