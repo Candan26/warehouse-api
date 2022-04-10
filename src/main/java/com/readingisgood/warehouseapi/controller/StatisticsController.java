@@ -1,6 +1,7 @@
 package com.readingisgood.warehouseapi.controller;
 
 
+import com.readingisgood.warehouseapi.model.WarehouseResponse;
 import com.readingisgood.warehouseapi.service.StatisticsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @RestController
@@ -22,11 +24,15 @@ public class StatisticsController {
     private final StatisticsService statisticsService;
 
     @CrossOrigin(origins = "*")
-    @GetMapping(value = "/totalOrderCount/")
+    @GetMapping(value = "/totalOrderCount")
     @ApiOperation(value = "Get total order without date intervals")
     public ResponseEntity<?> getTotalOrder() {
         try {
-            return new ResponseEntity<>(statisticsService.totalOrderCount(), HttpStatus.OK);
+            WarehouseResponse response = statisticsService.totalOrderCount();
+            if(response.getError()!=null){
+                return new ResponseEntity<>(response, response.getError().getStatus());
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception ex) {
             log.error("Exception on ", ex);
             return new ResponseEntity<>("Service Error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -35,11 +41,17 @@ public class StatisticsController {
 
 
     @CrossOrigin(origins = "*")
-    @GetMapping(value = "/totalOrderCount/{dateBegin}/{dateEnd}")
+    @GetMapping(value = "/totalOrderCountByDate")
     @ApiOperation(value = "Get total order by start stop date intervals")
-    public ResponseEntity<?> getTotalOrderByDateInterval(@PathVariable Date dateBegin, @PathVariable Date dateEnd) {
+    public ResponseEntity<?> getTotalOrderByDateInterval(@RequestParam(value = "dateBegin", defaultValue = "") String dateBegin,
+                                                         @RequestParam(value = "dateBegin", defaultValue = "") String dateEnd) {
         try {
-            return new ResponseEntity<>(statisticsService.queryCustomerOrders(dateBegin, dateEnd), HttpStatus.OK);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            WarehouseResponse response = statisticsService.queryCustomerOrders(format.parse(dateBegin), format.parse(dateEnd));
+            if(response.getError()!=null){
+                return new ResponseEntity<>(response, response.getError().getStatus());
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception ex) {
             log.error("Exception on ", ex);
             return new ResponseEntity<>("Service Error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

@@ -14,6 +14,7 @@ public class Customer {
     private String name;
     private String surname;
     private String tcId;
+    private String email;
     private int age;
     private boolean hasOrder;
 }

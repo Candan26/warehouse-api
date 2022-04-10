@@ -26,7 +26,7 @@ public class OrderServiceImpl implements OrderService {
 
     private static final String ERROR_INSERT_BOOK_IN_ORDER = "Please put which book you want to buy in order";
     private static final String ERROR_OUT_OF_STOCK = "Given books are not valid in stock";
-    private static final String ERROR_INSERT_ORDER = "System has error while inserting order please try again later";
+    private static final String ERROR_INSERT_ORDER = "System has error while adding order please try again later";
     private static final String ERROR_UPDATE_STOCK = "System has error on stock  please try again later";
 
     private final OrderRepository orderRepository;
@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             return new WarehouseResponse(WarehouseUtil.SUCCEED, orderRepository.findByStartDateBetween(startDate, stopDate), null);
         } catch (Exception ex) {
-            log.error("Exception on ",ex);
+            log.error("Exception on ", ex);
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex));
         }
     }
@@ -48,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             return new WarehouseResponse(WarehouseUtil.SUCCEED, orderRepository.findById(id).stream().findFirst().orElse(new Order()), null);
         } catch (Exception ex) {
-            log.error("Exception on ",ex);
+            log.error("Exception on ", ex);
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex));
         }
     }
@@ -67,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
             log.error("There is not enough book on Stock ");
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.BAD_REQUEST, ERROR_OUT_OF_STOCK));
         }
-        if (updateStock(bookMap)) {
+        if (!updateStock(bookMap, order)) {
             log.error("System cannot update the stock please check db connection");
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_UPDATE_STOCK));
         }
@@ -97,13 +97,14 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private boolean updateStock(HashMap<String, Integer> bookMap) {
+    private boolean updateStock(HashMap<String, Integer> bookMap, Order order) {
         try {
             for (Map.Entry<String, Integer> entry : bookMap.entrySet()) {
                 Stock stock = stockRepository.findByBookName(entry.getKey());
                 double unitPrice = stock.getTotalPrice() / stock.getTotalQuantity();
                 stock.setTotalQuantity(stock.getTotalQuantity() - entry.getValue());
                 stock.setTotalPrice(stock.getTotalPrice() - (unitPrice * entry.getValue()));
+                order.setOrderPrice(order.getOrderPrice() + unitPrice);
                 stockRepository.save(stock);
             }
             return true;

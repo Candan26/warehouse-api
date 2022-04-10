@@ -1,0 +1,394 @@
+{
+	"info": {
+		"_postman_id": "3736e439-5cd3-4565-8093-fb674c86d6a3",
+		"name": "wareHouseTest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "testAuth",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"subject\" : \"test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/auth",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "insertCustomer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NTk4NjUzLCJpYXQiOjE2NDk1OTU2NTN9.V6h24n-PTIqtpl52x-BbJixPQR2AtzTSI44VvcauxW6NRELJZFOEhzahJ7qbZAiUib0qNtbEl8dmSBr7oFDV2A",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"cagri\",\r\n    \"surname\":\"candan\",\r\n    \"age\":31\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/customer/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"customer",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "queryCustomerOrderByNameAndSurname",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/customer/getOrderList/0/10/cagri/candan",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"customer",
+						"getOrderList",
+						"0",
+						"10",
+						"cagri",
+						"candan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "queryCustomerByTc",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/customer/getOrderList/0/10/123123",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"customer",
+						"getOrderList",
+						"0",
+						"10",
+						"123123"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addBook",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"name\" :\"testbook\", \r\n        \"author\":\"testouther\",\r\n        \"price\" : 2323\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/book/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"book",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateStock",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \r\n    \"bookName\":\"testbook1\",\r\n    \"totalQuantity\":1,\r\n    \"totalPrice\":2323\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/book/update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"book",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addNewOrder",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"orderNumber\":232,\r\n    \"status\":\"NEW\",\r\n   \"startDate\": \"2022-03-16\",\r\n   \"customerId\":\"231234124\",\r\n    \"bookList\" : [{\r\n        \"name\" :\"testbook\", \r\n        \"author\":\"testouther\",\r\n        \"price\" : 2323\r\n\r\n    },\r\n    {\r\n         \"name\" :\"testbook1\", \r\n        \"author\":\"testouther1\",\r\n        \"price\" : 2323\r\n\r\n    }]\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/order/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"order",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "queryOrderByDateInterval",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/order/getByDateInterval?startDate=2022-03-16&stopDate=2022-04-20",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"order",
+						"getByDateInterval"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2022-03-16"
+						},
+						{
+							"key": "stopDate",
+							"value": "2022-04-20"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "queryOrderById",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/order/getById/6253060ef50a5d708043c9dc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"order",
+						"getById",
+						"6253060ef50a5d708043c9dc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getTotalOrder",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/statistics/totalOrderCount",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"statistics",
+						"totalOrderCount"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getTotalOrderByDateInterval",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjQ5NjE2NzcwLCJpYXQiOjE2NDk2MTM3NzB9.dabF8vXIPbNcL8p1SkpkipV574RlaM_pUOnDXlpQwgp5k2BK5e17QB5wZo9SaU5Bdnvp2LCwcjBvcd639xGbuw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/statistics/totalOrderCount?startDate=2022-03-16&stopDate=2022-04-20",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"statistics",
+						"totalOrderCount"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2022-03-16"
+						},
+						{
+							"key": "stopDate",
+							"value": "2022-04-20"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

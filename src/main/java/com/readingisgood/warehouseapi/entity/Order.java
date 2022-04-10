@@ -18,7 +18,7 @@ public class Order {
     private int orderNumber;
     private String status;
     private Date startDate;
-    private BigDecimal orderPrice;
+    private double orderPrice;
     private String customerId;
     private List<Book> bookList;
 }

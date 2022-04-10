@@ -54,6 +54,7 @@ public class CustomerMapperImpl implements CustomerMapper {
         for(Order o : ordersList){
             if (!map.containsKey(sdf.format(o.getStartDate()))) {
                 addNewStatistic(statistics, sdf, o);
+                map.put(sdf.format(o.getStartDate()),statistics.get(0));
             }else{
                 map.put(sdf.format(o.getStartDate()),statistics.get(updateStatisticList(statistics,sdf,o)));
             }
