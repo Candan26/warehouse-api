@@ -5,8 +5,8 @@ import com.readingisgood.warehouseapi.entity.Order;
 import com.readingisgood.warehouseapi.mapper.CustomerMapper;
 import com.readingisgood.warehouseapi.repository.OrderRepository;
 import com.readingisgood.warehouseapi.service.StatisticsService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -14,13 +14,12 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
 
-    @Autowired
-    OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
-    @Autowired
-    CustomerMapper customerMapper;
+    private final CustomerMapper customerMapper;
 
 
     @Override

@@ -9,8 +9,8 @@ import com.readingisgood.warehouseapi.repository.OrderRepository;
 import com.readingisgood.warehouseapi.repository.StockRepository;
 import com.readingisgood.warehouseapi.service.OrderService;
 import com.readingisgood.warehouseapi.util.WarehouseUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +21,7 @@ import java.util.Map;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     private static final String ERROR_INSERT_BOOK_IN_ORDER = "Please put which book you want to buy in order";
@@ -28,11 +29,9 @@ public class OrderServiceImpl implements OrderService {
     private static final String ERROR_INSERT_ORDER = "System has error while inserting order please try again later";
     private static final String ERROR_UPDATE_STOCK = "System has error on stock  please try again later";
 
-    @Autowired
-    OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
-    @Autowired
-    StockRepository stockRepository;
+    private final StockRepository stockRepository;
 
     @Override
     public WarehouseResponse queryOrdersByDateInterval(Date startDate, Date stopDate) {

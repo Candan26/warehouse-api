@@ -8,29 +8,26 @@ import com.readingisgood.warehouseapi.repository.BookRepository;
 import com.readingisgood.warehouseapi.repository.StockRepository;
 import com.readingisgood.warehouseapi.service.BookService;
 import com.readingisgood.warehouseapi.util.WarehouseUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
+@RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
     private static final String ERROR_WRONG_BOOK_DATA = "Please write book name";
 
     private static final String ERROR_STOCK_NULL_OBJECT = "Stock object cannot be null";
 
-    @Autowired
-    BookRepository bookRepository;
+    private final BookRepository bookRepository;
 
-    @Autowired
-    StockRepository stockRepository;
+    private final StockRepository stockRepository;
 
     @Override
     public WarehouseResponse addBook(Book book) {
         try {
-            if (book == null || book.getName() ==null ) {
+            if (book == null || book.getName() == null) {
                 return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.BAD_REQUEST, ERROR_WRONG_BOOK_DATA));
             }
             book = bookRepository.save(book);
@@ -48,7 +45,7 @@ public class BookServiceImpl implements BookService {
             if (stock == null) {
                 return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.BAD_REQUEST, ERROR_STOCK_NULL_OBJECT));
             }
-            return new WarehouseResponse(WarehouseUtil.SUCCEED,  stockRepository.save(stock), null);
+            return new WarehouseResponse(WarehouseUtil.SUCCEED, stockRepository.save(stock), null);
         } catch (Exception ex) {
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex));
         }
@@ -57,14 +54,14 @@ public class BookServiceImpl implements BookService {
     private void addBookToStock(Book book) {
 
         Stock stock = stockRepository.findByBookName(book.getName());
-        if(stock ==null ){
+        if (stock == null) {
             stock = new Stock();
             stock.setTotalPrice(book.getPrice());
             stock.setBookName(book.getName());
             stock.setTotalQuantity(1);
-        }else {
-            stock.setTotalQuantity(stock.getTotalQuantity()+1);
-            stock.setTotalPrice(stock.getTotalPrice()+book.getPrice());
+        } else {
+            stock.setTotalQuantity(stock.getTotalQuantity() + 1);
+            stock.setTotalPrice(stock.getTotalPrice() + book.getPrice());
         }
         stockRepository.save(stock);
     }

@@ -1,24 +1,22 @@
 package com.readingisgood.warehouseapi.controller;
 
 import com.readingisgood.warehouseapi.entity.Book;
-import com.readingisgood.warehouseapi.entity.Customer;
 import com.readingisgood.warehouseapi.entity.Stock;
 import com.readingisgood.warehouseapi.service.BookService;
-import com.readingisgood.warehouseapi.service.CustomerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/book")
+@RequiredArgsConstructor
 @Api(value = "Controller block for book objects")
 public class BookController {
 
-    @Autowired
-    BookService bookService;
+    private final BookService bookService;
 
     @CrossOrigin(origins = "*")
     @PostMapping(value = "/add")
@@ -26,8 +24,8 @@ public class BookController {
     public ResponseEntity<?> addBook(@RequestBody Book request) {
         try {
             return new ResponseEntity<>(bookService.addBook(request), HttpStatus.OK);
-        }catch (Exception ex){
-            return new ResponseEntity<>( "Service Error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Service Error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -37,8 +35,8 @@ public class BookController {
     public ResponseEntity<?> updateStock(@RequestBody Stock request) {
         try {
             return new ResponseEntity<>(bookService.updateBook(request), HttpStatus.OK);
-        }catch (Exception ex){
-            return new ResponseEntity<>( "Service Error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Service Error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

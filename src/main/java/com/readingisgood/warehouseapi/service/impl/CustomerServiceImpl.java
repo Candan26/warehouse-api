@@ -1,6 +1,5 @@
 package com.readingisgood.warehouseapi.service.impl;
 
-import com.readingisgood.warehouseapi.dto.CustomerDto;
 import com.readingisgood.warehouseapi.dto.CustomerOrderDto;
 import com.readingisgood.warehouseapi.entity.Customer;
 import com.readingisgood.warehouseapi.entity.Order;
@@ -13,11 +12,9 @@ import com.readingisgood.warehouseapi.service.CustomerService;
 import com.readingisgood.warehouseapi.util.WarehouseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -26,18 +23,16 @@ import java.util.stream.Stream;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
     private static final String ERROR_WRONG_CUSTOMER_DATA = "Please write customer name, surname and tc_id number";
 
-    @Autowired
-    CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
-    @Autowired
-    OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
-    @Autowired
-    CustomerMapper customerMapper;
+    private final CustomerMapper customerMapper;
 
 
     @Override
