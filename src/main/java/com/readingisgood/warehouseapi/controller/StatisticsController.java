@@ -5,6 +5,8 @@ import com.readingisgood.warehouseapi.model.WarehouseResponse;
 import com.readingisgood.warehouseapi.service.StatisticsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,10 @@ public class StatisticsController {
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/totalOrderCount")
     @ApiOperation(value = "Get total order without date intervals")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Returns order statistics list"),
+            @ApiResponse(code = 204, message = "If no statistics found on  based on order in stock"),
+            @ApiResponse(code = 500, message = "If statistic list get exception.")})
     public ResponseEntity<?> getTotalOrder() {
         try {
             WarehouseResponse response = statisticsService.totalOrderCount();
@@ -43,6 +49,10 @@ public class StatisticsController {
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/totalOrderCountByDate")
     @ApiOperation(value = "Get total order by start stop date intervals")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Returns order statistics list based on start stop date"),
+            @ApiResponse(code = 204, message = "If no statistics found on  based on order in stock"),
+            @ApiResponse(code = 500, message = "If statistic list get exception.")})
     public ResponseEntity<?> getTotalOrderByDateInterval(@RequestParam(value = "dateBegin", defaultValue = "") String dateBegin,
                                                          @RequestParam(value = "dateBegin", defaultValue = "") String dateEnd) {
         try {

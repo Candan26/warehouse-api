@@ -1,9 +1,10 @@
 package com.readingisgood.warehouseapi.mapper.impl;
 
-import com.readingisgood.warehouseapi.dto.CustomerOrderDto;
-import com.readingisgood.warehouseapi.dto.StatisticsByDateDto;
+import com.readingisgood.warehouseapi.dto.*;
+import com.readingisgood.warehouseapi.entity.Book;
 import com.readingisgood.warehouseapi.entity.Customer;
 import com.readingisgood.warehouseapi.entity.Order;
+import com.readingisgood.warehouseapi.entity.Stock;
 import com.readingisgood.warehouseapi.mapper.CustomerMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -46,11 +47,6 @@ public class CustomerMapperImpl implements CustomerMapper {
         Map<String , StatisticsByDateDto> map = new HashMap<>();
         List<StatisticsByDateDto> statistics = new ArrayList<>();
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM");
-
-        if(ordersList== null || ordersList.isEmpty()){
-            log.info("Empty order List returning empty StatisticsByDateDto object");
-            return statistics;
-        }
         for(Order o : ordersList){
             if (!map.containsKey(sdf.format(o.getStartDate()))) {
                 addNewStatistic(statistics, sdf, o);
@@ -62,16 +58,55 @@ public class CustomerMapperImpl implements CustomerMapper {
         return statistics;
     }
 
+    @Override
+    public CustomerDto customerToDto(Customer customer) {
+        CustomerDto dto  = new CustomerDto();
+        dto.setName(customer.getName());
+        dto.setSurname(customer.getSurname());
+        dto.setAge(customer.getAge());
+        dto.setEmail(customer.getEmail());
+        return dto;
+    }
+
+    @Override
+    public BookDto bookToDto(Book book) {
+        BookDto dto = new BookDto();
+        dto.setAuthor(book.getAuthor());
+        dto.setName(book.getName());
+        dto.setPrice(book.getPrice());
+        return dto;
+    }
+
+    @Override
+    public StockDto stockToDto(Stock stock) {
+        StockDto dto = new StockDto();
+        dto.setTotalPrice(stock.getTotalPrice());
+        dto.setTotalQuantity(stock.getTotalQuantity());
+        dto.setBookName(stock.getBookName());
+        return dto;
+    }
+
+    @Override
+    public OrderDto orderToDto(Order order) {
+        OrderDto dto = new OrderDto();
+        dto.setCustomerId(order.getCustomerId());
+        dto.setOrderPrice(dto.getOrderPrice());
+        dto.setOrderNumber(dto.getOrderNumber());
+        dto.setBookList(dto.getBookList());
+        dto.setStatus(dto.getStatus());
+        dto.setStartDate(dto.getStartDate());
+        return dto;
+    }
+
+
     private int  updateStatisticList(List<StatisticsByDateDto> statistics, SimpleDateFormat sdf, Order o) {
         int index = 0;
-        ListIterator<StatisticsByDateDto> iterator = statistics.listIterator();
-        while (iterator.hasNext()) {
-            StatisticsByDateDto next = iterator.next();
+        for (StatisticsByDateDto next : statistics) {
             if (next.getDate().equals(sdf.format(o.getStartDate()))) {
-                next.setTotalPurchasedAmount(BigDecimal.valueOf(next.getTotalPurchasedAmount().doubleValue()+ o.getBookList().size()* o.getBookList().get(0).getPrice()));
-                next.setTotalOrderCount(next.getTotalOrderCount()+1);
-                next.setTotalBookCount(next.getTotalBookCount()+o.getBookList().size());
-                statistics.set(index,next);
+                next.setTotalPurchasedAmount(BigDecimal.valueOf(next.getTotalPurchasedAmount().doubleValue() + o.getBookList().size() * o.getBookList().get(0).getPrice()));
+                next.setTotalOrderCount(next.getTotalOrderCount() + 1);
+                next.setTotalBookCount(next.getTotalBookCount() + o.getBookList().size());
+                statistics.set(index, next);
                 log.debug("Found StatisticsDto object on same date " + sdf.format(o.getStartDate()));
                 break;
             }

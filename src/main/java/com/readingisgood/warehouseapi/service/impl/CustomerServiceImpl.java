@@ -1,6 +1,5 @@
 package com.readingisgood.warehouseapi.service.impl;
 
-import com.readingisgood.warehouseapi.dto.CustomerOrderDto;
 import com.readingisgood.warehouseapi.entity.Customer;
 import com.readingisgood.warehouseapi.entity.Order;
 import com.readingisgood.warehouseapi.mapper.CustomerMapper;
@@ -27,7 +26,10 @@ import java.util.stream.Stream;
 public class CustomerServiceImpl implements CustomerService {
 
     private static final String ERROR_WRONG_CUSTOMER_DATA = "Please write customer name, surname and tc_id number";
-    private static final String ERROR_NO_CONTENT = "cannot found customers with this parameters";
+
+    private static final String ERROR_NO_CONTENT_CUSTOMER = "cannot found customers with this parameters";
+
+    private static final String ERROR_NO_CONTENT_ORDER = "cannot found orders in given customer";
 
     private final CustomerRepository customerRepository;
 
@@ -37,21 +39,23 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public Page<CustomerOrderDto> queryCustomerOrders(String name, String surname, int page, int size) throws Exception {
+    public WarehouseResponse queryCustomerOrders(String name, String surname, int page, int size) throws Exception {
         Pageable pagable = PageRequest.of(page, size);
         Customer customer;
-        Page<Order> orderList = null;
+        Page<Order> orderList;
         List<Customer> customerList = customerRepository.findByNameAndSurname(name, surname);
-        if (!customerList.isEmpty()) {
-            customer = customerList.get(0);
-        }else{
-            throw new Exception("cannot found customers with this parameters");
+        if (customerList.isEmpty()) {
+            log.debug("Customer list is empty for ordering query");
+            return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.NO_CONTENT, ERROR_NO_CONTENT_CUSTOMER));
         }
-        if(customer !=null){
-            log.debug("customer object found searching for order list from name surname");
-            orderList = orderRepository.findByCustomerId(customer.getTcId(), pagable);
+        customer = customerList.get(0);
+        log.debug("Customer object found searching for order list from name "+name+" surname "+ surname);
+        orderList = orderRepository.findByCustomerId(customer.getTcId(), pagable);
+        if (orderList.isEmpty()) {
+            log.debug("Order list is empty in give customer id " + customer.getTcId());
+            return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.NO_CONTENT, ERROR_NO_CONTENT_ORDER));
         }
-        return  customerMapper.customerSearchEntityToDto(customer,orderList);
+        return new WarehouseResponse(WarehouseUtil.SUCCEED, customerMapper.customerSearchEntityToDto(customer, orderList), null);
     }
 
     @Override
@@ -60,16 +64,16 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer;
         Page<Order> orderList = null;
         List<Customer> customerList = customerRepository.findByTcId(tc);
-        if (!customerList.isEmpty()) {
-            customer = customerList.get(0);
-        }else{
-            return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.NO_CONTENT, ERROR_NO_CONTENT));
+        if (customerList.isEmpty()) {
+            log.debug("Customer list empty for given tc id "+ tc);
+            return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.NO_CONTENT, ERROR_NO_CONTENT_CUSTOMER));
         }
-        if(customer !=null){
+        customer = customerList.get(0);
+        if (customer != null) {
             log.debug("customer object found searching for order list from tc id");
             orderList = orderRepository.findByCustomerId(customer.getTcId(), pagable);
         }
-        return  new WarehouseResponse(WarehouseUtil.SUCCEED, customerMapper.customerSearchEntityToDto(customer,orderList), null);
+        return new WarehouseResponse(WarehouseUtil.SUCCEED, customerMapper.customerSearchEntityToDto(customer, orderList), null);
     }
 
     @Override
@@ -78,15 +82,15 @@ public class CustomerServiceImpl implements CustomerService {
             if (Stream.of(customer).anyMatch(x -> (x == null || (x.getName() == null || x.getName().equals("")
                     || (x.getSurname() == null || x.getSurname().equals("")
                     || (x.getTcId() == null || x.getTcId().equals(""))))))) {
-                log.error("The customer object has wrong formatted name:  " + (customer != null ? customer.getName() :null)+
-                        " or surname: " + (customer != null ? customer.getSurname():null) +
-                        " or tcid: "+ (customer != null ? customer.getTcId():null));
+                log.error("The customer object has wrong formatted name:  " + (customer != null ? customer.getName() : null) +
+                        " or surname: " + (customer != null ? customer.getSurname() : null) +
+                        " or tcid: " + (customer != null ? customer.getTcId() : null));
                 return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.BAD_REQUEST, ERROR_WRONG_CUSTOMER_DATA));
             }
             customerRepository.insert(customer);
-            return new WarehouseResponse(WarehouseUtil.SUCCEED, customer, null);
+            return new WarehouseResponse(WarehouseUtil.SUCCEED, customerMapper.customerToDto(customer), null);
         } catch (Exception ex) {
-            log.error("Exception on ",ex);
+            log.error("Exception on ", ex);
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex));
         }
     }

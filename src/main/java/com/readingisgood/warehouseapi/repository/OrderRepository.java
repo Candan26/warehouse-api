@@ -1,6 +1,5 @@
 package com.readingisgood.warehouseapi.repository;
 
-import com.readingisgood.warehouseapi.entity.Customer;
 import com.readingisgood.warehouseapi.entity.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
