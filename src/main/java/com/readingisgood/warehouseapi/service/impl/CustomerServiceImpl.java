@@ -40,7 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public WarehouseResponse queryCustomerOrders(String name, String surname, int page, int size) throws Exception {
-        Pageable pagable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size);
         Customer customer;
         Page<Order> orderList;
         List<Customer> customerList = customerRepository.findByNameAndSurname(name, surname);
@@ -50,7 +50,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
         customer = customerList.get(0);
         log.debug("Customer object found searching for order list from name "+name+" surname "+ surname);
-        orderList = orderRepository.findByCustomerId(customer.getTcId(), pagable);
+        orderList = orderRepository.findByCustomerId(customer.getTcId(), pageable);
         if (orderList.isEmpty()) {
             log.debug("Order list is empty in give customer id " + customer.getTcId());
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.NO_CONTENT, ERROR_NO_CONTENT_ORDER));
@@ -60,19 +60,16 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public WarehouseResponse queryCustomerOrders(String tc, int page, int size) throws Exception {
-        Pageable pagable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size);
         Customer customer;
-        Page<Order> orderList = null;
+        Page<Order> orderList;
         List<Customer> customerList = customerRepository.findByTcId(tc);
         if (customerList.isEmpty()) {
             log.debug("Customer list empty for given tc id "+ tc);
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.NO_CONTENT, ERROR_NO_CONTENT_CUSTOMER));
         }
         customer = customerList.get(0);
-        if (customer != null) {
-            log.debug("customer object found searching for order list from tc id");
-            orderList = orderRepository.findByCustomerId(customer.getTcId(), pagable);
-        }
+        orderList = orderRepository.findByCustomerId(customer.getTcId(), pageable);
         return new WarehouseResponse(WarehouseUtil.SUCCEED, customerMapper.customerSearchEntityToDto(customer, orderList), null);
     }
 
