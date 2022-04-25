@@ -29,7 +29,7 @@ public class SwaggerConfig {
     private ApiInfo apiEndPointsInfo() {
         return new ApiInfoBuilder().title("Warehouse Api Swagger Info")
                 .description("Documents of application")
-                .contact(new Contact("Cagri Candan","http://cagricandan.com","cagricandan91@gmail.com"))
+                .contact(new Contact("Cagri Candan","http://www.cagricandan.com","cagricandan91@gmail.com"))
                 .license("Apache 2.0")
                 .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
                 .version("1.12.3")

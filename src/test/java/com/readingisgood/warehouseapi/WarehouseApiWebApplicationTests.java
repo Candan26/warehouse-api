@@ -1,21 +1,32 @@
 package com.readingisgood.warehouseapi;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.readingisgood.warehouseapi.dto.AuthServiceDto;
 import com.readingisgood.warehouseapi.entity.Book;
 import com.readingisgood.warehouseapi.entity.Customer;
 import com.readingisgood.warehouseapi.entity.Order;
+import com.readingisgood.warehouseapi.model.WarehouseResponse;
 import com.readingisgood.warehouseapi.repository.BookRepository;
 import com.readingisgood.warehouseapi.repository.OrderRepository;
+import com.readingisgood.warehouseapi.service.BookService;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -24,22 +35,31 @@ import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(OrderAnnotation.class)
 public class WarehouseApiWebApplicationTests {
-    
+
     @Autowired
     private MockMvc mockMvc;
-    
+
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
     BookRepository bookRepository;
-    
+
     @Autowired
     OrderRepository orderRepository;
+
+    @MockBean
+    BookService bookService;
+
+    @Test
+    void testMockBean() {
+
+        bookService.addBook(new Book());
+    }
 
     @Test
     void testAuthentication() throws Exception {
@@ -51,6 +71,111 @@ public class WarehouseApiWebApplicationTests {
                 .param("subject", "test")
         ).andExpect(status().isOk());
     }
+     /*
+     *  Insertion test
+     *  This test has order because feature test on db depends on this
+     */
+    @Test
+    @org.junit.jupiter.api.Order(1)
+    void testCustomerInsert() throws Exception {
+        // Try unouthirezed method
+        Customer customer= new Customer();
+        customer.setEmail("123");
+        customer.setName("test");
+        customer.setSurname("surname");
+        customer.setTcId("231234124");
+        String accessToken = obtainAccessToken();
+        mockMvc.perform(post("/customer/add").
+                contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken)
+                .content(objectMapper.writeValueAsString(customer))
+        );
+    }
+
+    @Test
+    @org.junit.jupiter.api.Order(2)
+    void testBookInsert() throws Exception {
+        Book book= new Book();
+        book.setAuthor("testAuthor");
+        book.setName("testbook");
+        book.setPrice(1231);
+        String accessToken = obtainAccessToken();
+        mockMvc.perform(post("/book/add").
+                contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken)
+                .content(objectMapper.writeValueAsString(book))
+        ).andExpect(status().isOk());
+    }
+
+    @Test
+    void testNewOrderInsert() throws Exception {
+        // Try unouthirezed method
+        List<Book> bl = new ArrayList<>();
+        Book b = new Book();
+        Order order = new Order();
+        b.setName("testbook");// book should be on stock document
+        bl.add(b);
+        order.setStatus("TEST");
+        order.setOrderPrice(1234);
+        order.setOrderNumber(1);
+        order.setBookList(bl);
+        order.setCustomerId("0000");
+        order.setStartDate(new Date());
+        String accessToken = obtainAccessToken();
+
+        MvcResult obj = mockMvc.perform(post("/order/add").
+                contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken)
+                .content(objectMapper.writeValueAsString(order))
+        ).andReturn();
+        WarehouseResponse warehouseResponse = getWarehouseResponse(obj);
+        mockMvc.perform(post("/order/add").
+                contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken)
+                .content(objectMapper.writeValueAsString(order))
+        ).andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void addNewOrderFailedNotEnoughBook() throws Exception {
+        // Try unouthirezed method
+        List<Book> bl = new ArrayList<>();
+        Book b = new Book();
+        Order order = new Order();
+        b.setName("TestBookForOrder");
+        bl.add(b);
+        order.setStatus("TEST");
+        order.setOrderPrice(1234);
+        order.setOrderNumber(1);
+        order.setBookList(bl);
+        order.setCustomerId("0000");
+        order.setStartDate(new Date());
+        String accessToken = obtainAccessToken();
+        mockMvc.perform(post("/order/add").
+                contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken)
+                .content(objectMapper.writeValueAsString(order))
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void addNewOrderFailed() throws Exception {
+        // Try unouthirezed method
+        Order order = new Order();
+        order.setStatus("TEST");
+        order.setOrderPrice(1234);
+        order.setOrderNumber(1);
+        order.setBookList(new ArrayList<>());
+        order.setCustomerId("0000");
+        order.setStartDate(new Date());
+        String accessToken = obtainAccessToken();
+        mockMvc.perform(post("/order/add").
+                contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken)
+                .content(objectMapper.writeValueAsString(order))
+        ).andExpect(status().isBadRequest());
+    }
+
 
     @Test
     void testCustomerInsertionUnauthorized() throws Exception {
@@ -64,22 +189,6 @@ public class WarehouseApiWebApplicationTests {
                 contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(customer))
         ).andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    void testCustomerInsertionSucceed() throws Exception {
-        // Try unouthirezed method
-        Customer customer= new Customer();
-        customer.setEmail("123");
-        customer.setName("test");
-        customer.setSurname("surname");
-        customer.setTcId("231234124");
-        String accessToken = obtainAccessToken();
-        mockMvc.perform(post("/customer/add").
-                contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken)
-                .content(objectMapper.writeValueAsString(customer))
-        );
     }
 
     @Test
@@ -115,21 +224,6 @@ public class WarehouseApiWebApplicationTests {
                 contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + accessToken)
         ).andExpect(status().is2xxSuccessful());
-    }
-
-    @Test
-    void addBookSucceed() throws Exception {
-        // Try unouthirezed method
-        Book book= new Book();
-        book.setAuthor("testAuthor");
-        book.setName("test");
-        book.setPrice(1231);
-        String accessToken = obtainAccessToken();
-        mockMvc.perform(post("/book/add").
-                contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken)
-                .content(objectMapper.writeValueAsString(book))
-        ).andExpect(status().isOk());
     }
 
     @Test
@@ -176,69 +270,6 @@ public class WarehouseApiWebApplicationTests {
     }
 
 
-    @Test
-    void addNewOrderFailed() throws Exception {
-        // Try unouthirezed method
-        Order order = new Order();
-        order.setStatus("TEST");
-        order.setOrderPrice(1234);
-        order.setOrderNumber(1);
-        order.setBookList(new ArrayList<>());
-        order.setCustomerId("0000");
-        order.setStartDate(new Date());
-        String accessToken = obtainAccessToken();
-        mockMvc.perform(post("/order/add").
-                contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken)
-                .content(objectMapper.writeValueAsString(order))
-        ).andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void addNewOrderFailedNotEnoughBook() throws Exception {
-        // Try unouthirezed method
-        List<Book> bl = new ArrayList<>();
-        Book b = new Book();
-        Order order = new Order();
-
-        b.setName("TestBookForOrder");
-        bl.add(b);
-        order.setStatus("TEST");
-        order.setOrderPrice(1234);
-        order.setOrderNumber(1);
-        order.setBookList(bl);
-        order.setCustomerId("0000");
-        order.setStartDate(new Date());
-        String accessToken = obtainAccessToken();
-        mockMvc.perform(post("/order/add").
-                contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken)
-                .content(objectMapper.writeValueAsString(order))
-        ).andExpect(status().isBadRequest());
-    }
-
-
-    @Test
-    void addNewOrderSucceed() throws Exception {
-        // Try unouthirezed method
-        List<Book> bl = new ArrayList<>();
-        Book b = new Book();
-        Order order = new Order();
-        b.setName("testbook");// book should be on stock document
-        bl.add(b);
-        order.setStatus("TEST");
-        order.setOrderPrice(1234);
-        order.setOrderNumber(1);
-        order.setBookList(bl);
-        order.setCustomerId("0000");
-        order.setStartDate(new Date());
-        String accessToken = obtainAccessToken();
-        mockMvc.perform(post("/order/add").
-                contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken)
-                .content(objectMapper.writeValueAsString(order))
-        ).andExpect(status().is4xxClientError());
-    }
 
 
     @Test
@@ -267,10 +298,12 @@ public class WarehouseApiWebApplicationTests {
     void getTotalOrder() throws Exception {
         // Try unouthirezed method
         String accessToken = obtainAccessToken();
-        mockMvc.perform(get("/statistics/totalOrderCount").
+        MvcResult obj = mockMvc.perform(get("/statistics/totalOrderCount").
                 contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + accessToken)
-        ).andExpect(status().isOk());
+        ).andReturn();
+        WarehouseResponse warehouseResponse = getWarehouseResponse(obj);
+        System.out.println(warehouseResponse.toString());
     }
 
     @Test
@@ -283,6 +316,17 @@ public class WarehouseApiWebApplicationTests {
         ).andExpect(status().isOk());
     }
 
+    //private methods
+    private WarehouseResponse getWarehouseResponse(MvcResult obj) throws UnsupportedEncodingException, JsonProcessingException {
+        String s = obj.getResponse().getContentAsString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new Jdk8Module());
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper.readValue(s,
+                new TypeReference<>() {
+                });
+    }
+
     private String obtainAccessToken() throws Exception {
         JacksonJsonParser jsonParser = new JacksonJsonParser();
         ResultActions result
@@ -293,7 +337,7 @@ public class WarehouseApiWebApplicationTests {
         ).andExpect(status().isOk());
         String resultString = result.andReturn().getResponse().getContentAsString();
         Object obj = jsonParser.parseMap(resultString).get("data");
-        return    (String) ( (LinkedHashMap) obj).get("token");
+        return    (String) ( (LinkedHashMap<?, ?>) obj).get("token");
     }
 
 }
