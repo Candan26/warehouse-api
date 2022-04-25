@@ -49,6 +49,7 @@ class BookServiceTest {
         Mockito.when(bookRepository.save(book)).thenReturn(book);
         Mockito.when(stockRepository.findByBookName(book.getName())).thenReturn(stock);
         Mockito.when(stockRepository.save(stock)).thenReturn(stock);
+        Mockito.when(customerMapper.bookToDto(book)).thenReturn(bookDto);
         WarehouseResponse b = bookService.addBook(book);
         assertEquals(b.getData(), bookDto);
     }
@@ -63,9 +64,10 @@ class BookServiceTest {
         Mockito.when(bookRepository.save(book)).thenReturn(book);
         Mockito.when(stockRepository.findByBookName(book.getName())).thenReturn(stock);
         Mockito.when(stockRepository.save(stock)).thenReturn(stock);
+        Mockito.when(customerMapper.bookToDto(book)).thenReturn(bookDto);
         WarehouseResponse warehouseResponse = bookService.updateBook(stock);
         assertNotEquals(warehouseResponse.getData(), bookDto);
-        log.error("Error message ", warehouseResponse.getError().getMessage());
+        log.error("Error message " + warehouseResponse.getError().getMessage());
     }
 
     @Test
@@ -78,7 +80,7 @@ class BookServiceTest {
         Mockito.when(stockRepository.save(stock)).thenReturn(stock);
         WarehouseResponse warehouseResponse = bookService.updateBook(stock);
         assertNotEquals(warehouseResponse.getData(), stockDto);
-        log.error("Error message ", warehouseResponse.getError().getMessage());
+        log.error("Error message " + warehouseResponse.getError().getMessage());
     }
 
     @Test
@@ -94,7 +96,7 @@ class BookServiceTest {
         assertEquals(warehouseResponse.getData(), stockDto);
     }
 
-    private StockDto getStockDto(Book book) {
+    public static StockDto getStockDto(Book book) {
         StockDto dto = new StockDto();
         Stock stock = getStock(book);
         dto.setTotalPrice(stock.getTotalPrice());
@@ -103,31 +105,30 @@ class BookServiceTest {
         return dto;
     }
 
-    private Stock getStock(Book book, String status) {
+    public static Stock getStock(Book book, String status) {
         Stock stock = getStock(book);
         stock.setId(status.equals(WarehouseUtil.VALID) ? "1231415" : null);
         return stock;
     }
 
-    private Stock getStock(Book book) {
+    public static Stock getStock(Book book) {
         Stock stock = new Stock();
         stock.setTotalPrice(book.getPrice());
         stock.setBookName(book.getName());
         stock.setTotalQuantity(1);
-
         return stock;
     }
 
-    private BookDto getBookDto(Book book) {
+    public static BookDto getBookDto(Book book) {
         BookDto bookDto = new BookDto();
         bookDto.setAuthor(book.getAuthor());
         bookDto.setName(book.getName());
         bookDto.setPrice(book.getPrice());
-        Mockito.when(customerMapper.bookToDto(book)).thenReturn(bookDto);
+
         return bookDto;
     }
 
-    private Book getBook(String status) {
+    public static Book getBook(String status) {
         Book book = new Book();
         book.setName(status.equals(WarehouseUtil.VALID) ? "testBook" : null);
         book.setAuthor("testAuthor");

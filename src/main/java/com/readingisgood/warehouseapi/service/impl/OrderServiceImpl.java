@@ -40,7 +40,7 @@ public class OrderServiceImpl implements OrderService {
     public WarehouseResponse queryOrdersByDateInterval(Date startDate, Date stopDate) {
         try {
             var val = orderRepository.findByStartDateBetween(startDate, stopDate);
-            if(val ==null || val.isEmpty()){
+            if (val == null || val.isEmpty()) {
                 return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.NO_CONTENT, ERROR_NO_CONTENT_ORDER_DATE_INTERVAL));
             }
             List<OrderDto> dtoList = new ArrayList<>();
@@ -55,8 +55,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public WarehouseResponse queryOrdersById(String id) {
-        var val = orderRepository.findById(id);
-        return val.map(order -> new WarehouseResponse(WarehouseUtil.SUCCEED, customerMapper.orderToDto(order), null)).orElseGet(() -> new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.NOT_FOUND, ERROR_OBJECT_NOT_ORDER)));
+        try{
+            var val = orderRepository.findById(id);
+            return val.map(order -> new WarehouseResponse(WarehouseUtil.SUCCEED, customerMapper.orderToDto(order), null)).
+                    orElseGet(() -> new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.NOT_FOUND, ERROR_OBJECT_NOT_ORDER)));
+        }catch (Exception ex) {
+            log.error("Exception on ", ex);
+            return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex));
+        }
     }
 
     @Override
@@ -94,7 +100,7 @@ public class OrderServiceImpl implements OrderService {
     private WarehouseResponse addOrder(Order order, HashMap<String, Integer> bookMap) {
         try {
             order.setStatus(WarehouseUtil.PURCHASED);
-            return new WarehouseResponse(WarehouseUtil.SUCCEED, orderRepository.save(order), null);
+            return new WarehouseResponse(WarehouseUtil.SUCCEED, customerMapper.orderToDto(orderRepository.save(order)), null);
         } catch (Exception ex) {
             log.error("Exception on ", ex);
             log.error("rollback the stock information ");

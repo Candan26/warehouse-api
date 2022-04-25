@@ -7,30 +7,24 @@ import com.readingisgood.warehouseapi.entity.Order;
 import com.readingisgood.warehouseapi.mapper.CustomerMapper;
 import com.readingisgood.warehouseapi.mapper.impl.CustomerMapperImpl;
 import com.readingisgood.warehouseapi.model.WarehouseResponse;
-import com.readingisgood.warehouseapi.repository.BookRepository;
 import com.readingisgood.warehouseapi.repository.CustomerRepository;
 import com.readingisgood.warehouseapi.repository.OrderRepository;
-import com.readingisgood.warehouseapi.repository.StockRepository;
 import com.readingisgood.warehouseapi.service.impl.CustomerServiceImpl;
 import com.readingisgood.warehouseapi.util.WarehouseUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.internal.matchers.Or;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @Slf4j
 class CustomerServiceTest {
@@ -71,7 +65,7 @@ class CustomerServiceTest {
         customerDto = getCustomerDto(customer);
         WarehouseResponse warehouseResponse = customerService.addCustomer(customer);
         assertNotEquals(warehouseResponse.getData(), customerDto);
-        log.error("Error message ", warehouseResponse.getError().getMessage());
+        log.error("Error message " + warehouseResponse.getError().getMessage());
     }
 
     @Test
@@ -85,7 +79,7 @@ class CustomerServiceTest {
         Page<CustomerOrderDto> customerOrderDtoPage;
 
         customer = getCustomer(WarehouseUtil.VALID);
-        Order order = getOrderObj(customer);
+        Order order = OrderServiceTest.getOrderObj(customer);
         orderList.add(order);
         customerList.add(customer);
         orderPage = (Page<Order>) toPage(orderList, pageable);
@@ -115,15 +109,6 @@ class CustomerServiceTest {
         return new PageImpl<>(list.subList(start, end), pageable, list.size());
     }
 
-    private Order getOrderObj(Customer customer) {
-        Order order = new Order();
-        order.setCustomerId(customer.getTcId());
-        order.setOrderPrice(13);
-        order.setStatus(WarehouseUtil.PURCHASED);
-        order.setStartDate(new Date());
-        return order;
-    }
-
     private CustomerOrderDto getCustomerOrderDto(Customer customer, Order order) {
         CustomerOrderDto dto = new CustomerOrderDto();
         dto.setOrderDate(order.getStartDate());
@@ -143,7 +128,7 @@ class CustomerServiceTest {
         return dto;
     }
 
-    private Customer getCustomer(String status) {
+    public static Customer getCustomer(String status) {
         Customer customer = new Customer();
         customer.setTcId(status.equals(WarehouseUtil.VALID) ? "122312312" : null);
         customer.setName(status.equals(WarehouseUtil.VALID) ? "testCustomerName" : null);
