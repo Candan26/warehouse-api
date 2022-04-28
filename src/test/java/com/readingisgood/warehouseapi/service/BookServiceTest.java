@@ -54,48 +54,6 @@ class BookServiceTest {
         assertEquals(b.getData(), bookDto);
     }
 
-    @Test
-    public void whenAddBookCalledWithInValidRequest_itShouldReturnError() {
-        Book book;
-        BookDto bookDto;
-        book = getBook(WarehouseUtil.NOT_VALID);
-        bookDto = getBookDto(book);
-        Stock stock = getStock(book);
-        Mockito.when(bookRepository.save(book)).thenReturn(book);
-        Mockito.when(stockRepository.findByBookName(book.getName())).thenReturn(stock);
-        Mockito.when(stockRepository.save(stock)).thenReturn(stock);
-        Mockito.when(customerMapper.bookToDto(book)).thenReturn(bookDto);
-        WarehouseResponse warehouseResponse = bookService.updateBook(stock);
-        assertNotEquals(warehouseResponse.getData(), bookDto);
-        log.error("Error message " + warehouseResponse.getError().getMessage());
-    }
-
-    @Test
-    public void whenUpdateBookCalledWithInValidRequest_itShouldReturnError() {
-        Book book;
-        book = getBook(WarehouseUtil.NOT_VALID);
-        Stock stock = getStock(book);
-        StockDto stockDto = getStockDto(book);
-        Mockito.when(stockRepository.findById(book.getId())).thenReturn(Optional.of(stock));
-        Mockito.when(stockRepository.save(stock)).thenReturn(stock);
-        WarehouseResponse warehouseResponse = bookService.updateBook(stock);
-        assertNotEquals(warehouseResponse.getData(), stockDto);
-        log.error("Error message " + warehouseResponse.getError().getMessage());
-    }
-
-    @Test
-    public void whenUpdateBookCalledWithValidRequest_itShouldReturnValidDto() {
-        Book book;
-        book = getBook(WarehouseUtil.VALID);
-        Stock stock = getStock(book, WarehouseUtil.VALID);
-        StockDto stockDto = getStockDto(book);
-        Mockito.when(stockRepository.findById(Mockito.any())).thenReturn(Optional.of(stock));
-        Mockito.when(stockRepository.save(stock)).thenReturn(stock);
-        Mockito.when(customerMapper.stockToDto(stock)).thenReturn(stockDto);
-        WarehouseResponse warehouseResponse = bookService.updateBook(stock);
-        assertEquals(warehouseResponse.getData(), stockDto);
-    }
-
     public static StockDto getStockDto(Book book) {
         StockDto dto = new StockDto();
         Stock stock = getStock(book);

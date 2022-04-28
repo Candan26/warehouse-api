@@ -15,6 +15,5 @@ public interface CustomerMapper {
     List<StatisticsByDateDto> fromAllOrderMonthlyStatisticsToDto( List<Order> ordersList) throws Exception;
     CustomerDto customerToDto(Customer customer);
     BookDto bookToDto(Book book);
-    StockDto stockToDto(Stock stock);
     OrderDto orderToDto(Order order);
 }

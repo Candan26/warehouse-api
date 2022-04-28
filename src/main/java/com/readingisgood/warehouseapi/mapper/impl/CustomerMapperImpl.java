@@ -78,15 +78,6 @@ public class CustomerMapperImpl implements CustomerMapper {
     }
 
     @Override
-    public StockDto stockToDto(Stock stock) {
-        StockDto dto = new StockDto();
-        dto.setTotalPrice(stock.getTotalPrice());
-        dto.setTotalQuantity(stock.getTotalQuantity());
-        dto.setBookName(stock.getBookName());
-        return dto;
-    }
-
-    @Override
     public OrderDto orderToDto(Order order) {
         OrderDto dto = new OrderDto();
         dto.setCustomerId(order.getCustomerId());
