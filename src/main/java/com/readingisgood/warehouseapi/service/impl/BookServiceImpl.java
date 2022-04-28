@@ -21,10 +21,6 @@ public class BookServiceImpl implements BookService {
 
     private static final String ERROR_WRONG_BOOK_DATA = "Please write book name";
 
-    private static final String ERROR_STOCK_NULL_OBJECT = "Stock object cannot be null";
-
-    private static final String ERROR_OBJECT_NOT_IN_STOCK = "Given stock id not exist in database";
-
     private final BookRepository bookRepository;
 
     private final StockRepository stockRepository;
@@ -45,34 +41,6 @@ public class BookServiceImpl implements BookService {
             log.error("Exception on ", ex);
             return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex));
         }
-    }
-
-    @Override
-    public WarehouseResponse updateBook(Stock stock) {
-        try {
-            Stock stockFromDb;
-            if (stock == null) {
-                log.error("Stock object is null");
-                return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.BAD_REQUEST, ERROR_STOCK_NULL_OBJECT));
-            }
-            var val = stockRepository.findById(stock.getId() == null ? "" : stock.getId());
-            if (val.isEmpty()) {
-                return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.NOT_FOUND, ERROR_OBJECT_NOT_IN_STOCK));
-            }
-            stockFromDb = val.get();
-            cloneStockObj(stock, stockFromDb);
-            var stockVal = stockRepository.save(stockFromDb);
-            return new WarehouseResponse(WarehouseUtil.SUCCEED,  customerMapper.stockToDto(stockVal), null);
-        } catch (Exception ex) {
-            log.error("Exception on", ex);
-            return new WarehouseResponse(WarehouseUtil.FAILED, "", new Error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex));
-        }
-    }
-
-    private void cloneStockObj(Stock stock, Stock stockFromDb) {
-        stockFromDb.setBookName(stock.getBookName());
-        stockFromDb.setTotalPrice(stock.getTotalPrice());
-        stockFromDb.setTotalQuantity(stock.getTotalQuantity());
     }
 
     private void addBookToStock(Book book) {

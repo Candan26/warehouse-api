@@ -54,7 +54,7 @@ public class StatisticsController {
             @ApiResponse(code = 204, message = "If no statistics found on  based on order in stock"),
             @ApiResponse(code = 500, message = "If statistic list get exception.")})
     public ResponseEntity<?> getTotalOrderByDateInterval(@RequestParam(value = "dateBegin", defaultValue = "") String dateBegin,
-                                                         @RequestParam(value = "dateBegin", defaultValue = "") String dateEnd) {
+                                                         @RequestParam(value = "dateEnd", defaultValue = "") String dateEnd) {
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             WarehouseResponse response = statisticsService.queryCustomerOrders(format.parse(dateBegin), format.parse(dateEnd));

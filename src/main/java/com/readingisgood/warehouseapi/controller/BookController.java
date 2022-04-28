@@ -1,7 +1,6 @@
 package com.readingisgood.warehouseapi.controller;
 
 import com.readingisgood.warehouseapi.entity.Book;
-import com.readingisgood.warehouseapi.entity.Stock;
 import com.readingisgood.warehouseapi.model.WarehouseResponse;
 import com.readingisgood.warehouseapi.service.BookService;
 import io.swagger.annotations.Api;
@@ -43,24 +42,4 @@ public class BookController {
         }
     }
 
-    @CrossOrigin(origins = "*")
-    @PostMapping(value = "/update")
-    @ApiOperation(value = "Update stock directly by stock object")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Stock obj updated on collection."),
-            @ApiResponse(code = 400, message = "If Stock obj null."),
-            @ApiResponse(code = 404, message = "If Stock is not in database."),
-            @ApiResponse(code = 500, message = "If Stock service get exception.")})
-    public ResponseEntity<?> updateStock(@RequestBody Stock request) {
-        try {
-            WarehouseResponse response = bookService.updateBook(request);
-            if(response.getError()!=null){
-                return new ResponseEntity<>(response, response.getError().getStatus());
-            }
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception ex) {
-            log.error("Exception on ", ex);
-            return new ResponseEntity<>("Service Error " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }
